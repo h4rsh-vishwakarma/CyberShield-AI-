@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #444;
+            border-radius: 5px;
+        }
+        button {
+            background: #00f0ff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .result {
+            background: #0f0f23;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success { color: #00ff9d; }
+        .error { color: #ff3366; }
+    </style>
+</head>
+<body>
+    <h1>CyberShield AI API Test</h1>
+
+    <div class="test-section">
+        <h2>Login Test</h2>
+        <button onclick="testLogin()">Test Login</button>
+        <div id="loginResult" class="result">Click to test</div>
+    </div>
+
+    <div class="test-section">
+        <h2>Health Check</h2>
+        <button onclick="testHealth()">Test Health</button>
+        <div id="healthResult" class="result">Click to test</div>
+    </div>
+
+    <div class="test-section">
+        <h2>Register Test</h2>
+        <button onclick="testRegister()">Test Register</button>
+        <div id="registerResult" class="result">Click to test</div>
+    </div>
+
+    <script>
+        async function testLogin() {
+            const resultDiv = document.getElementById('loginResult');
+            resultDiv.innerHTML = 'Testing...';
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'demo@cybershield.ai',
+                        password: 'demo123'
+                    }),
+                });
+
+                const data = await response.json();
+                resultDiv.innerHTML = '<span class="success">✅ Success:</span>\n' + JSON.stringify(data, null, 2);
+
+                if (data.access_token) {
+                    localStorage.setItem('token', data.access_token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<span class="error">❌ Error:</span>\n' + error.message;
+            }
+        }
+
+        async function testHealth() {
+            const resultDiv = document.getElementById('healthResult');
+            resultDiv.innerHTML = 'Testing...';
+
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                resultDiv.innerHTML = '<span class="success">✅ Success:</span>\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.innerHTML = '<span class="error">❌ Error:</span>\n' + error.message;
+            }
+        }
+
+        async function testRegister() {
+            const resultDiv = document.getElementById('registerResult');
+            resultDiv.innerHTML = 'Testing...';
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: 'Test User ' + Date.now(),
+                        email: 'test' + Date.now() + '@example.com',
+                        password: 'test123456'
+                    }),
+                });
+
+                const data = await response.json();
+                resultDiv.innerHTML = '<span class="success">✅ Success:</span>\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.innerHTML = '<span class="error">❌ Error:</span>\n' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

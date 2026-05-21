@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,42 +15,13 @@ import { Settings } from './pages/Settings';
 import { Profile } from './pages/Profile';
 import { ApiKeyManagement } from './pages/ApiKeyManagement';
 import { ThemeProvider } from './context/ThemeContext';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import './index.css';
 
 function AppContent() {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const location = useLocation();
-  const [loading, setLoading] = useState(true);
-
-  // Check authentication status
-  useEffect(() => {
-    const checkAuth = () => {
-      try {
-        const token = localStorage.getItem('token');
-        const user = localStorage.getItem('user');
-        setIsAuthenticated(!!token && !!user);
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        setIsAuthenticated(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-
-    // Listen for auth changes
-    const handleStorageChange = () => {
-      const token = localStorage.getItem('token');
-      const user = localStorage.getItem('user');
-      setIsAuthenticated(!!token && !!user);
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
+  const { isAuthenticated, loading, user } = useAuth();
 
   if (loading) {
     return (
@@ -105,8 +76,8 @@ function AppContent() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/" element={<Dashboard key={user?.id || 'default'} />} />
+              <Route path="/dashboard" element={<Dashboard key={user?.id || 'default'} />} />
               <Route path="/fake-news" element={<FakeNewsAnalyzer />} />
               <Route path="/deepfake" element={<DeepfakeDetector />} />
               <Route path="/crime-analytics" element={<CrimeAnalytics />} />

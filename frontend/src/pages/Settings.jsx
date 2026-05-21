@@ -60,7 +60,7 @@ export const Settings = () => {
     const loadSettings = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:8000/api/settings', {
+        const response = await fetch('/api/settings', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -84,7 +84,7 @@ export const Settings = () => {
     setSaving(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:8001/api/settings', {
+      const response = await fetch('/api/settings', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -169,7 +169,7 @@ export const Settings = () => {
     const changePassword = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:8001/api/change-password', {
+        const response = await fetch('/api/change-password', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

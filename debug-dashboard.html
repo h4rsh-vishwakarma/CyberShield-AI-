@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #444;
+            border-radius: 5px;
+        }
+        button {
+            background: #00f0ff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #444;
+            border-radius: 3px;
+            background: #2a2a3e;
+            color: #fff;
+            width: 250px;
+        }
+        .output {
+            background: #0f0f23;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success { color: #00ff9d; }
+        .error { color: #ff3366; }
+        .warning { color: #ffaa00; }
+        .token-display {
+            background: #2a2a3e;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Dashboard User Isolation Debug</h1>
+
+    <div class="section">
+        <h2>📱 Test 1: Login & Dashboard for User 1</h2>
+        <input type="email" id="user1-email" value="user1@test.com" placeholder="Email">
+        <input type="password" id="user1-pass" value="password123" placeholder="Password">
+        <button onclick="testUser1()">Test User 1</button>
+        <div id="user1-token" class="token-display">Token: Not logged in</div>
+        <div id="user1-output" class="output">Click to test</div>
+    </div>
+
+    <div class="section">
+        <h2>📱 Test 2: Login & Dashboard for User 2</h2>
+        <input type="email" id="user2-email" value="user2@test.com" placeholder="Email">
+        <input type="password" id="user2-pass" value="password123" placeholder="Password">
+        <button onclick="testUser2()">Test User 2</button>
+        <div id="user2-token" class="token-display">Token: Not logged in</div>
+        <div id="user2-output" class="output">Click to test</div>
+    </div>
+
+    <div class="section">
+        <h2>🔄 Test 3: Compare Both Users</h2>
+        <button onclick="compareUsers()">Compare Dashboard Data</button>
+        <div id="compare-output" class="output">Click to test</div>
+    </div>
+
+    <div class="section">
+        <h2>🧪 Test 4: User 1 Performs Analysis</h2>
+        <button onclick="user1Analyzes()">User 1 Analyzes Text</button>
+        <div id="analysis-output" class="output">Click to test</div>
+    </div>
+
+    <div class="section">
+        <h2>📊 Current localStorage</h2>
+        <button onclick="showLocalStorage()">Show Current Storage</button>
+        <div id="storage-output" class="output">Click to test</div>
+    </div>
+
+    <div class="section">
+        <h2🧹 Clear Browser Data</h2>
+        <button onclick="clearData()">Clear All Data</button>
+        <div id="clear-output" class="output">Click to clear data</div>
+    </div>
+
+    <script>
+        let user1Token = null;
+        let user2Token = null;
+
+        async function testUser1() {
+            const email = document.getElementById('user1-email').value;
+            const password = document.getElementById('user1-pass').value;
+            const output = document.getElementById('user1-output');
+            const tokenDisplay = document.getElementById('user1-token');
+
+            output.innerHTML = '<span class="warning">⏳ Testing User 1...</span>';
+
+            try {
+                // Login
+                const loginResponse = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                if (!loginResponse.ok) {
+                    throw new Error(`Login failed: ${loginResponse.status}`);
+                }
+
+                const loginData = await loginResponse.json();
+                user1Token = loginData.access_token;
+
+                tokenDisplay.innerHTML = `<span class="success">✅ Token: ${user1Token.substring(0, 20)}...</span>`;
+
+                // Get dashboard
+                const dashboardResponse = await fetch('/api/dashboard/stats', {
+                    headers: { 'Authorization': `Bearer ${user1Token}` }
+                });
+
+                if (!dashboardResponse.ok) {
+                    throw new Error(`Dashboard failed: ${dashboardResponse.status}`);
+                }
+
+                const dashboardData = await dashboardResponse.json();
+
+                output.innerHTML = `
+<span class="success">✅ USER 1 SUCCESS:</span>
+
+Login Response:
+${JSON.stringify(loginData.user, null, 2)}
+
+Dashboard Data:
+${JSON.stringify(dashboardData, null, 2)}
+
+Summary:
+- User ID: ${loginData.user.id}
+- Total Analyses: ${dashboardData.total_analyses}
+- Fake News: ${dashboardData.fake_news_detected}
+- Deepfakes: ${dashboardData.deepfakes_detected}
+`;
+            } catch (error) {
+                output.innerHTML = `<span class="error">❌ USER 1 ERROR:</span>\n${error.message}\n\n${error.stack}`;
+            }
+        }
+
+        async function testUser2() {
+            const email = document.getElementById('user2-email').value;
+            const password = document.getElementById('user2-pass').value;
+            const output = document.getElementById('user2-output');
+            const tokenDisplay = document.getElementById('user2-token');
+
+            output.innerHTML = '<span class="warning">⏳ Testing User 2...</span>';
+
+            try {
+                // Login
+                const loginResponse = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                if (!loginResponse.ok) {
+                    throw new Error(`Login failed: ${loginResponse.status}`);
+                }
+
+                const loginData = await loginResponse.json();
+                user2Token = loginData.access_token;
+
+                tokenDisplay.innerHTML = `<span class="success">✅ Token: ${user2Token.substring(0, 20)}...</span>`;
+
+                // Get dashboard
+                const dashboardResponse = await fetch('/api/dashboard/stats', {
+                    headers: { 'Authorization': `Bearer ${user2Token}` }
+                });
+
+                if (!dashboardResponse.ok) {
+                    throw new Error(`Dashboard failed: ${dashboardResponse.status}`);
+                }
+
+                const dashboardData = await dashboardResponse.json();
+
+                output.innerHTML = `
+<span class="success">✅ USER 2 SUCCESS:</span>
+
+Login Response:
+${JSON.stringify(loginData.user, null, 2)}
+
+Dashboard Data:
+${JSON.stringify(dashboardData, null, 2)}
+
+Summary:
+- User ID: ${loginData.user.id}
+- Total Analyses: ${dashboardData.total_analyses}
+- Fake News: ${dashboardData.fake_news_detected}
+- Deepfakes: ${dashboardData.deepfakes_detected}
+`;
+            } catch (error) {
+                output.innerHTML = `<span class="error">❌ USER 2 ERROR:</span>\n${error.message}\n\n${error.stack}`;
+            }
+        }
+
+        async function compareUsers() {
+            const output = document.getElementById('compare-output');
+
+            if (!user1Token || !user2Token) {
+                output.innerHTML = '<span class="error">❌ Please login both users first</span>';
+                return;
+            }
+
+            output.innerHTML = '<span class="warning">⏳ Comparing users...</span>';
+
+            try {
+                const [user1Response, user2Response] = await Promise.all([
+                    fetch('/api/dashboard/stats', { headers: { 'Authorization': `Bearer ${user1Token}` } }),
+                    fetch('/api/dashboard/stats', { headers: { 'Authorization': `Bearer ${user2Token}` } })
+                ]);
+
+                const user1Data = await user1Response.json();
+                const user2Data = await user2Response.json();
+
+                const comparison = {
+                    user1: {
+                        id: '3',
+                        total_analyses: user1Data.total_analyses,
+                        fake_news: user1Data.fake_news_detected,
+                        deepfakes: user1Data.deepfakes_detected
+                    },
+                    user2: {
+                        id: '4',
+                        total_analyses: user2Data.total_analyses,
+                        fake_news: user2Data.fake_news_detected,
+                        deepfakes: user2Data.deepfakes_detected
+                    },
+                    are_different: user1Data.total_analyses !== user2Data.total_analyses
+                };
+
+                if (comparison.are_different) {
+                    output.innerHTML = `
+<span class="success">✅ SUCCESS: Users have DIFFERENT data!</span>
+
+${JSON.stringify(comparison, null, 2)}
+
+✅ User isolation is working correctly!
+`;
+                } else {
+                    output.innerHTML = `
+<span class="error">❌ PROBLEM: Users have IDENTICAL data!</span>
+
+${JSON.stringify(comparison, null, 2)}
+
+❌ This indicates a user data isolation issue!
+`;
+                }
+            } catch (error) {
+                output.innerHTML = `<span class="error">❌ ERROR:</span>\n${error.message}`;
+            }
+        }
+
+        async function user1Analyzes() {
+            const output = document.getElementById('analysis-output');
+
+            if (!user1Token) {
+                output.innerHTML = '<span class="error">❌ Please login User 1 first</span>';
+                return;
+            }
+
+            output.innerHTML = '<span class="warning">⏳ User 1 analyzing text...</span>';
+
+            try {
+                const response = await fetch('/api/fake-news/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${user1Token}`
+                    },
+                    body: JSON.stringify({
+                        text: 'This is a test analysis performed specifically by User 1'
+                    }),
+                });
+
+                const data = await response.json();
+
+                output.innerHTML = `
+<span class="success">✅ User 1 Analysis Complete:</span>
+
+${JSON.stringify(data, null, 2)}
+
+Next step: Compare dashboards to see if User 1's count increased!
+`;
+            } catch (error) {
+                output.innerHTML = `<span class="error">❌ ERROR:</span>\n${error.message}`;
+            }
+        }
+
+        function showLocalStorage() {
+            const output = document.getElementById('storage-output');
+
+            const storage = {
+                token: localStorage.getItem('token'),
+                user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null,
+                allKeys: Object.keys(localStorage)
+            };
+
+            output.innerHTML = `
+Current localStorage:
+
+${JSON.stringify(storage, null, 2)}
+`;
+        }
+
+        function clearData() {
+            const output = document.getElementById('clear-output');
+
+            localStorage.clear();
+            sessionStorage.clear();
+
+            // Also clear cookies
+            document.cookie.split(";").forEach(function(c) {
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+            });
+
+            user1Token = null;
+            user2Token = null;
+
+            output.innerHTML = '<span class="success">✅ All browser data cleared!</span>\n\nPlease refresh the page and test again.';
+
+            // Reset displays
+            document.getElementById('user1-token').innerHTML = 'Token: Not logged in';
+            document.getElementById('user2-token').innerHTML = 'Token: Not logged in';
+            document.getElementById('user1-output').innerHTML = 'Click to test';
+            document.getElementById('user2-output').innerHTML = 'Click to test';
+        }
+    </script>
+</body>
+</html>

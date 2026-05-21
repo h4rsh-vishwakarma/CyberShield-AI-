@@ -101,7 +101,7 @@ app.add_middleware(
 # Trusted hosts (prevent host header attacks)
 app.add_middleware(
     TrustedHostMiddleware,
-    allowed_hosts=["localhost", "127.0.0.1", "cybershield.ai", "*.cybershield.ai"]  # Production domains
+    allowed_hosts=["localhost", "127.0.0.1", "cybershield.ai", "*.cybershield.ai", "3.27.205.150", "*"]  # Allow all hosts for development/testing
 )
 
 # Security utilities
@@ -317,7 +317,8 @@ class FakeNewsDetector:
         # Credibility indicators
         credibility_indicators = [
             "according to", "research shows", "studies indicate",
-            "experts say", "data reveals", "published in"
+            "experts say", "data reveals", "published in", "official",
+            "confirmed", "verified", "reported"
         ]
 
         # Count indicators
@@ -330,17 +331,40 @@ class FakeNewsDetector:
         question_count = text.count('?')
         all_caps_count = sum(1 for word in text.split() if word.isupper() and len(word) > 2)
 
-        # Calculate fake news score
+        # Calculate fake news score - improved algorithm
         fake_score = (fake_count * 20) + (exclamation_count * 5) + (question_count * 3) + (all_caps_count * 10)
         credibility_score = credibility_count * 15
 
-        # Normalize scores
+        # Normalize scores - improved algorithm
         total_score = fake_score - credibility_score
         max_possible = 100
         normalized_score = max(0, min(100, (total_score + 50) / max_possible * 100))
 
-        is_fake = normalized_score > 50
-        confidence = 70 + random.randint(0, 25)  # 70-95% confidence
+        # Determine if fake based on multiple factors
+        # Text that's too short or lacks credibility indicators is more likely fake
+        text_quality_score = min(20, text_length / 5)  # Longer text gets quality points
+        final_score = normalized_score + (20 - text_quality_score) if text_length < 50 else normalized_score
+
+        is_fake = final_score > 55
+
+        # More realistic confidence calculation
+        # If there are strong fake indicators, confidence should be higher
+        # If there are credibility indicators, confidence should reflect that
+        if fake_count > 0 and credibility_count == 0:
+            # Clear fake indicators with no credibility = high confidence fake
+            confidence = min(95, 70 + fake_count * 5 + min(10, exclamation_count * 2))
+        elif credibility_count > fake_count:
+            # More credibility than fake indicators = likely legitimate
+            confidence = max(40, 100 - (credibility_count * 3) - (fake_count * 5))
+            is_fake = confidence < 60  # Override fake detection if high credibility
+        elif fake_count == 0 and credibility_count == 0:
+            # No clear indicators - use text quality
+            confidence = 60 + (text_quality_score // 2)
+        else:
+            # Mixed indicators - moderate confidence
+            confidence = 55 + abs(fake_count - credibility_count) * 3
+
+        confidence = max(30, min(95, confidence))  # Ensure reasonable range
 
         return {
             "is_fake": is_fake,
@@ -349,8 +373,8 @@ class FakeNewsDetector:
                 "credibility": 100 - confidence if not is_fake else confidence,
                 "bias": self._determine_bias(text),
                 "sentiment": self._determine_sentiment(text),
-                "sources": max(1, credibility_count),
-                "facts": max(1, credibility_count // 2)
+                "sources": credibility_count,
+                "facts": credibility_count // 2
             },
             "details": self._generate_detailed_analysis(text, is_fake, confidence)
         }
@@ -635,12 +659,13 @@ async def register(request: Request, user: User):
         user_dict["_id"] = str(len(users_collection) + 1)
         users_collection.append(user_dict)
 
-    # Remove password from response
-    user_dict.pop("password", None)
+    # Remove password from response (create a copy first)
+    user_response = user_dict.copy()
+    user_response.pop("password", None)
 
     return {
         "message": "User registered successfully",
-        "user": user_dict
+        "user": user_response
     }
 
 @app.post("/api/auth/login", response_model=dict)
@@ -687,6 +712,26 @@ async def get_me(current_user = Depends(get_current_user)):
         "name": current_user["name"],
         "email": current_user["email"],
         "role": current_user.get("role", "user")
+    }
+
+@app.get("/api/user/profile")
+async def get_user_profile(current_user = Depends(get_current_user)):
+    """Get user profile information with statistics"""
+    user_id = str(current_user["_id"])
+
+    # Get user statistics
+    if client:
+        total_analyses = analyses_collection.count_documents({"user_id": user_id})
+    else:
+        total_analyses = len([a for a in analyses_collection if a.get("user_id") == user_id])
+
+    return {
+        "id": str(current_user["_id"]),
+        "name": current_user["name"],
+        "email": current_user["email"],
+        "role": current_user.get("role", "user"),
+        "total_analyses": total_analyses,
+        "created_at": current_user.get("created_at", datetime.utcnow()).isoformat() if isinstance(current_user.get("created_at"), datetime) else str(current_user.get("created_at", ""))
     }
 
 # Settings Management Routes
@@ -1294,10 +1339,12 @@ async def get_dashboard_stats(current_user = Depends(get_current_user)):
         system_health = 98
         processing_time = 2.3
 
-    # Add some base stats if no data yet
-    total_analyses = max(total_analyses, 5)  # Minimum 5 for demo
-    fake_news_detected = max(fake_news_detected, 2)
-    deepfakes_detected = max(deepfakes_detected, 1)
+    # Don't force minimum values - let users see their actual data
+    # Only apply minimum values for demo user
+    # if str(current_user.get("_id", "")) == "demo_1":
+    #     total_analyses = max(total_analyses, 5)
+    #     fake_news_detected = max(fake_news_detected, 2)
+    #     deepfakes_detected = max(deepfakes_detected, 1)
 
     return {
         "total_analyses": total_analyses,
@@ -1340,18 +1387,18 @@ async def get_recent_activity(current_user = Depends(get_current_user), limit: i
             "confidence": result.get("confidence", 0) if isinstance(result, dict) else 0
         })
 
-    # Add some demo activity if empty
-    if len(formatted_activities) == 0:
-        formatted_activities = [
-            {
-                "id": "demo_1",
-                "type": "fake_news",
-                "message": "System initialized - ready for analysis",
-                "result": {"is_fake": False, "confidence": 100},
-                "timestamp": datetime.utcnow().isoformat(),
-                "confidence": 100
-            }
-        ]
+    # Return empty activities if user has none - don't show demo data
+    # if len(formatted_activities) == 0:
+    #     formatted_activities = [
+    #         {
+    #             "id": "demo_1",
+    #             "type": "fake_news",
+    #             "message": "System initialized - ready for analysis",
+    #             "result": {"is_fake": False, "confidence": 100},
+    #             "timestamp": datetime.utcnow().isoformat(),
+    #             "confidence": 100
+    #         }
+    #     ]
 
     return {
         "activities": formatted_activities

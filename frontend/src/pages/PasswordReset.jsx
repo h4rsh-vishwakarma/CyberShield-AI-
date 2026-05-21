@@ -97,7 +97,7 @@ export const PasswordReset = () => {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8001/api/password-reset/request', {
+      const response = await fetch('/api/password-reset/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -174,7 +174,7 @@ export const PasswordReset = () => {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8001/api/password-reset/confirm', {
+      const response = await fetch('/api/password-reset/confirm', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

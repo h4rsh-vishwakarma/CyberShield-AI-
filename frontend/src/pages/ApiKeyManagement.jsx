@@ -62,7 +62,7 @@ export const ApiKeyManagement = () => {
   const loadApiKeys = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:8001/api/api-keys', {
+      const response = await fetch('/api/api-keys', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -105,7 +105,7 @@ export const ApiKeyManagement = () => {
     setCreating(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:8001/api/api-keys', {
+      const response = await fetch('/api/api-keys', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -154,7 +154,7 @@ export const ApiKeyManagement = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:8001/api/api-keys/${keyId}`, {
+      const response = await fetch(`/api/api-keys/${keyId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

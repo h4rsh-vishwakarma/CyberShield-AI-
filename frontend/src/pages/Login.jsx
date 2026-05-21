@@ -45,8 +45,12 @@ export const Login = () => {
 
     setLoading(true);
     try {
-      await login(formData.email, formData.password);
-      navigate('/dashboard');
+      const loginData = await login(formData.email, formData.password);
+
+      // Give time for state to update before navigation
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 500);
     } catch (error) {
       console.error('Login failed:', error);
       // Error is already handled by the login function

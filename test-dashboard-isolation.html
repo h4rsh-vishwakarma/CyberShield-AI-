@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #444;
+            border-radius: 5px;
+        }
+        button {
+            background: #00f0ff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #444;
+            border-radius: 3px;
+            background: #2a2a3e;
+            color: #fff;
+        }
+        .result {
+            background: #0f0f23;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success { color: #00ff9d; }
+        .error { color: #ff3366; }
+        .warning { color: #ffaa00; }
+    </style>
+</head>
+<body>
+    <h1>CyberShield AI Dashboard User Isolation Test</h1>
+
+    <div class="test-section">
+        <h2>User 1 Login</h2>
+        <input type="email" id="user1-email" value="user1@test.com" placeholder="Email">
+        <input type="password" id="user1-password" value="password123" placeholder="Password">
+        <button onclick="loginUser1()">Login User 1</button>
+        <button onclick="getUser1Dashboard()">Get User 1 Dashboard</button>
+        <div id="user1-result" class="result">Click to test</div>
+    </div>
+
+    <div class="test-section">
+        <h2>User 2 Login</h2>
+        <input type="email" id="user2-email" value="user2@test.com" placeholder="Email">
+        <input type="password" id="user2-password" value="password123" placeholder="Password">
+        <button onclick="loginUser2()">Login User 2</button>
+        <button onclick="getUser2Dashboard()">Get User 2 Dashboard</button>
+        <div id="user2-result" class="result">Click to test</div>
+    </div>
+
+    <div class="test-section">
+        <h2>User 1 Analysis</h2>
+        <button onclick="analyzeUser1()">Perform Analysis as User 1</button>
+        <div id="user1-analysis-result" class="result">Click to test</div>
+    </div>
+
+    <div class="test-section">
+        <h2>Comparison</h2>
+        <button onclick="compareDashboards()">Compare Both Dashboards</button>
+        <div id="comparison-result" class="result">Click to test</div>
+    </div>
+
+    <script>
+        let user1Token = '';
+        let user2Token = '';
+
+        async function loginUser1() {
+            const email = document.getElementById('user1-email').value;
+            const password = document.getElementById('user1-password').value;
+            const resultDiv = document.getElementById('user1-result');
+            resultDiv.innerHTML = 'Logging in...';
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const data = await response.json();
+                user1Token = data.access_token;
+                resultDiv.innerHTML = '<span class="success">✅ User 1 Logged In:</span>\n' + JSON.stringify(data.user, null, 2);
+            } catch (error) {
+                resultDiv.innerHTML = '<span class="error">❌ Error:</span>\n' + error.message;
+            }
+        }
+
+        async function loginUser2() {
+            const email = document.getElementById('user2-email').value;
+            const password = document.getElementById('user2-password').value;
+            const resultDiv = document.getElementById('user2-result');
+            resultDiv.innerHTML = 'Logging in...';
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const data = await response.json();
+                user2Token = data.access_token;
+                resultDiv.innerHTML = '<span class="success">✅ User 2 Logged In:</span>\n' + JSON.stringify(data.user, null, 2);
+            } catch (error) {
+                resultDiv.innerHTML = '<span class="error">❌ Error:</span>\n' + error.message;
+            }
+        }
+
+        async function getUser1Dashboard() {
+            const resultDiv = document.getElementById('user1-result');
+            resultDiv.innerHTML = 'Fetching dashboard...';
+
+            try {
+                const response = await fetch('/api/dashboard/stats', {
+                    headers: { 'Authorization': `Bearer ${user1Token}` }
+                });
+
+                const data = await response.json();
+                resultDiv.innerHTML = '<span class="success">✅ User 1 Dashboard:</span>\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.innerHTML = '<span class="error">❌ Error:</span>\n' + error.message;
+            }
+        }
+
+        async function getUser2Dashboard() {
+            const resultDiv = document.getElementById('user2-result');
+            resultDiv.innerHTML = 'Fetching dashboard...';
+
+            try {
+                const response = await fetch('/api/dashboard/stats', {
+                    headers: { 'Authorization': `Bearer ${user2Token}` }
+                });
+
+                const data = await response.json();
+                resultDiv.innerHTML = '<span class="success">✅ User 2 Dashboard:</span>\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.innerHTML = '<span class="error">❌ Error:</span>\n' + error.message;
+            }
+        }
+
+        async function analyzeUser1() {
+            const resultDiv = document.getElementById('user1-analysis-result');
+            resultDiv.innerHTML = 'Analyzing...';
+
+            try {
+                const response = await fetch('/api/fake-news/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${user1Token}`
+                    },
+                    body: JSON.stringify({ text: 'This is a test analysis for user 1 only' }),
+                });
+
+                const data = await response.json();
+                resultDiv.innerHTML = '<span class="success">✅ User 1 Analysis:</span>\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.innerHTML = '<span class="error">❌ Error:</span>\n' + error.message;
+            }
+        }
+
+        async function compareDashboards() {
+            const resultDiv = document.getElementById('comparison-result');
+            resultDiv.innerHTML = 'Comparing...';
+
+            try {
+                const [user1Response, user2Response] = await Promise.all([
+                    fetch('/api/dashboard/stats', { headers: { 'Authorization': `Bearer ${user1Token}` } }),
+                    fetch('/api/dashboard/stats', { headers: { 'Authorization': `Bearer ${user2Token}` } })
+                ]);
+
+                const user1Data = await user1Response.json();
+                const user2Data = await user2Response.json();
+
+                const comparison = {
+                    user1: user1Data,
+                    user2: user2Data,
+                    areDifferent: JSON.stringify(user1Data) !== JSON.stringify(user2Data),
+                    user1Analyses: user1Data.total_analyses,
+                    user2Analyses: user2Data.total_analyses
+                };
+
+                if (comparison.areDifferent) {
+                    resultDiv.innerHTML = '<span class="success">✅ SUCCESS: Users have different data!</span>\n' + JSON.stringify(comparison, null, 2);
+                } else {
+                    resultDiv.innerHTML = '<span class="error">❌ FAIL: Users have identical data (isolation issue)</span>\n' + JSON.stringify(comparison, null, 2);
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<span class="error">❌ Error:</span>\n' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
