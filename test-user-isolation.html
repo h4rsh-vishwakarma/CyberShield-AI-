@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield AI - User Isolation Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #00f0ff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .test-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .test-section h2 {
+            color: #00f0ff;
+            margin-bottom: 20px;
+        }
+
+        .test-steps {
+            background: rgba(0, 240, 255, 0.1);
+            border-left: 4px solid #00f0ff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .test-steps ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .test-steps li {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .user-credentials {
+            background: rgba(255, 204, 0, 0.1);
+            border: 1px solid rgba(255, 204, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .user-credentials h3 {
+            color: #ffcc00;
+            margin: 0 0 10px 0;
+        }
+
+        .user-credentials p {
+            margin: 5px 0;
+            font-family: monospace;
+            font-size: 1.1em;
+        }
+
+        .expected-results {
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid rgba(0, 255, 157, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .expected-results h3 {
+            color: #00ff9d;
+            margin: 0 0 10px 0;
+        }
+
+        .api-test {
+            background: rgba(255, 0, 153, 0.1);
+            border: 1px solid rgba(255, 0, 153, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .api-test h3 {
+            color: #ff0099;
+            margin: 0 0 10px 0;
+        }
+
+        .api-test code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+
+        .api-test pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-success {
+            background: #00ff9d;
+        }
+
+        .status-warning {
+            background: #ffcc00;
+        }
+
+        .status-error {
+            background: #ff3366;
+        }
+
+        .button {
+            background: linear-gradient(90deg, #00f0ff, #00ff9d);
+            border: none;
+            color: #0f0c29;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 10px 5px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .troubleshooting {
+            background: rgba(255, 51, 102, 0.1);
+            border: 1px solid rgba(255, 51, 102, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .troubleshooting h3 {
+            color: #ff3366;
+            margin: 0 0 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🧪 CyberShield AI - User Isolation Test</h1>
+
+        <!-- Test Instructions -->
+        <div class="test-section">
+            <h2>📋 Test Instructions</h2>
+            <p>This test verifies that different users see their own data and not each other's data.</p>
+
+            <div class="test-steps">
+                <h3>Step-by-Step Testing:</h3>
+                <ol>
+                    <li><strong>Open Application:</strong> Go to <a href="http://3.27.205.150" target="_blank" style="color: #00f0ff;">http://3.27.205.150</a></li>
+                    <li><strong>Login as User 1:</strong> Use testuser1@example.com credentials below</li>
+                    <li><strong>Check Dashboard:</strong> Note the "Total Analyses" count</li>
+                    <li><strong>Check Profile:</strong> Note the "Total Analyses" and "Rank"</li>
+                    <li><strong>Logout Completely:</strong> Click logout, wait 3-5 seconds</li>
+                    <li><strong>Login as User 2:</strong> Use testuser2@example.com credentials below</li>
+                    <li><strong>Check Dashboard:</strong> Should show different "Total Analyses" count</li>
+                    <li><strong>Check Profile:</strong> Should show different "Total Analyses" and "Rank"</li>
+                    <li><strong>Verify API:</strong> Use the API test commands below to confirm backend isolation</li>
+                </ol>
+            </div>
+
+            <div class="user-credentials">
+                <h3>🔐 User 1 Credentials</h3>
+                <p><strong>Email:</strong> testuser1@example.com</p>
+                <p><strong>Password:</strong> test123</p>
+            </div>
+
+            <div class="user-credentials">
+                <h3>🔐 User 2 Credentials</h3>
+                <p><strong>Email:</strong> testuser2@example.com</p>
+                <p><strong>Password:</strong> test123</p>
+            </div>
+        </div>
+
+        <!-- Expected Results -->
+        <div class="test-section">
+            <h2>✅ Expected Results</h2>
+
+            <div class="expected-results">
+                <h3>User 1 (testuser1@example.com) Should See:</h3>
+                <p><span class="status-indicator status-success"></span><strong>Dashboard:</strong> 1 Total Analysis</p>
+                <p><span class="status-indicator status-success"></span><strong>Profile:</strong> 1 Total Analyses, "New Contributor" rank</p>
+                <p><span class="status-indicator status-success"></span><strong>Profile Accuracy:</strong> 100% (1 analysis, 0 fake news detected)</p>
+            </div>
+
+            <div class="expected-results">
+                <h3>User 2 (testuser2@example.com) Should See:</h3>
+                <p><span class="status-indicator status-success"></span><strong>Dashboard:</strong> 0 Total Analyses</p>
+                <p><span class="status-indicator status-success"></span><strong>Profile:</strong> 0 Total Analyses, "New User" rank</p>
+                <p><span class="status-indicator status-success"></span><strong>Profile Accuracy:</strong> 0%</p>
+            </div>
+
+            <div class="expected-results">
+                <h3>🚨 Critical Failure Signs:</h3>
+                <p><span class="status-indicator status-error"></span>If both users see the same numbers, isolation is NOT working</p>
+                <p><span class="status-indicator status-error"></span>If User 2 sees User 1's data, there's a data leak</p>
+                <p><span class="status-indicator status-error"></spanIf dashboard/profile show old user's data after logout</p>
+            </div>
+        </div>
+
+        <!-- API Testing -->
+        <div class="test-section">
+            <h2>🔧 API Testing (Backend Verification)</h2>
+            <p>These commands test the backend directly to confirm data isolation:</p>
+
+            <div class="api-test">
+                <h3>Test 1: Get User 1 Token and Dashboard Stats</h3>
+                <pre><code># Step 1: Login as User 1 and get token
+curl -X POST http://3.27.205.150:8001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"testuser1@example.com","password":"test123"}'
+
+# Step 2: Copy the access_token from response and use it
+curl -X GET http://3.27.205.150:8001/api/dashboard/stats \
+  -H "Authorization:Bearer YOUR_ACCESS_TOKEN"
+
+# Expected: {"total_analyses": 1, "fake_news_detected": 0, ...}</code></pre>
+            </div>
+
+            <div class="api-test">
+                <h3>Test 2: Get User 2 Token and Dashboard Stats</h3>
+                <pre><code># Step 1: Login as User 2 and get token
+curl -X POST http://3.27.205.150:8001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"testuser2@example.com","password":"test123"}'
+
+# Step 2: Copy the access_token from response and use it
+curl -X GET http://3.27.205.150:8001/api/dashboard/stats \
+  -H "Authorization:Bearer YOUR_ACCESS_TOKEN"
+
+# Expected: {"total_analyses": 0, "fake_news_detected": 0, ...}</code></pre>
+            </div>
+
+            <div class="api-test">
+                <h3>Test 3: User Profile Endpoint</h3>
+                <pre><code># Get user profile data (requires valid token)
+curl -X GET http://3.27.205.150:8001/api/user/profile \
+  -H "Authorization:Bearer YOUR_ACCESS_TOKEN"
+
+# Should return user-specific data based on the token</code></pre>
+            </div>
+
+            <button class="button" onclick="window.open('http://3.27.205.150', '_blank')">🚀 Open Application</button>
+            <button class="button" onclick="window.open('http://3.27.205.150:8001/docs', '_blank')">📚 API Documentation</button>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="test-section">
+            <h2>🔍 Troubleshooting</h2>
+
+            <div class="troubleshooting">
+                <h3>If user isolation is still not working:</h3>
+                <ol>
+                    <li><strong>Clear Browser Cache:</strong> Press Ctrl+Shift+Delete and clear cache/cookies</li>
+                    <li><strong>Hard Refresh:</strong> Press Ctrl+F5 to force reload the page</li>
+                    <li><strong>Check Console:</strong> Press F12 and look for JavaScript errors</li>
+                    <li><strong>Verify Token:</strong> In F12 → Application → Local Storage, check that the token changes between users</li>
+                    <li><strong>Wait Between Logouts:</strong> Wait 5-10 seconds between logout and login</li>
+                    <li><strong>Try Incognito Mode:</strong> Open in incognito/private window to test without cache</li>
+                </ol>
+            </div>
+
+            <div class="troubleshooting">
+                <h3>If backend API is working but frontend shows wrong data:</h3>
+                <ol>
+                    <li>Frontend caching issue - try hard refresh (Ctrl+F5)</li>
+                    <li>React state not updating - check console for error messages</li>
+                    <li>AuthContext not updating - verify localStorage is being cleared</li>
+                    <li>Component not re-rendering - try logging out and back in</li>
+                </ol>
+            </div>
+
+            <div class="troubleshooting">
+                <h3>If both frontend and backend show wrong data:</h3>
+                <ol>
+                    <li>Database might have corrupted user IDs</li>
+                    <li>User data might be stored incorrectly</li>
+                    <li>Need to check backend database directly</li>
+                    <li>Consider resetting test user data</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Quick Access -->
+        <div class="test-section">
+            <h2>🎯 Quick Access Links</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <button class="button" onclick="window.open('http://3.27.205.150', '_blank')">🏠 Main Application</button>
+                <button class="button" onclick="window.open('http://3.27.205.150:8001/docs', '_blank')">📚 API Docs</button>
+                <button class="button" onclick="window.open('http://3.27.205.150/architecture-and-techstack.html', '_blank')">🏗️ Architecture & Tech Stack</button>
+                <button class="button" onclick="location.reload()">🔄 Reload Test Page</button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; color: #666; font-style: italic;">
+            CyberShield AI User Isolation Test Tool<br>
+            🛡️ Making Digital Spaces Safer Through Artificial Intelligence
+        </div>
+    </div>
+
+    <script>
+        // Auto-check if we can access the API
+        fetch('http://3.27.205.150:8001/health')
+            .then(response => {
+                if (response.ok) {
+                    console.log('✅ Backend API is accessible');
+                } else {
+                    console.warn('⚠️ Backend API returned non-OK status');
+                }
+            })
+            .catch(error => {
+                console.error('❌ Cannot access backend API:', error);
+            });
+    </script>
+</body>
+</html>
