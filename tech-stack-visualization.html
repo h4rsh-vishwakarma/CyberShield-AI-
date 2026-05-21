@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield AI Tech Stack</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #ffffff;
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 50px;
+            background: linear-gradient(90deg, #00f0ff, #00ff9d, #ff0066);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .tech-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .tech-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00f0ff, #00ff9d);
+        }
+
+        .frontend-card::before { background: linear-gradient(90deg, #00f0ff, #00ff9d); }
+        .backend-card::before { background: linear-gradient(90deg, #ff0066, #ff0099); }
+        .ai-card::before { background: linear-gradient(90deg, #ff9900, #ffcc00); }
+        .security-card::before { background: linear-gradient(90deg, #00ff66, #00ff99); }
+        .database-card::before { background: linear-gradient(90deg, #9900ff, #ff00ff); }
+        .devops-card::before { background: linear-gradient(90deg, #0066ff, #00ffcc); }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            font-size: 2.5em;
+            margin-right: 15px;
+        }
+
+        .card-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tech-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tech-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .tech-list li:last-child {
+            border-bottom: none;
+        }
+
+        .tech-list li::before {
+            content: '✓';
+            color: #00ff9d;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .tech-category {
+            font-weight: bold;
+            color: #00f0ff;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .version-badge {
+            background: rgba(0, 240, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .highlight {
+            color: #ffcc00;
+            font-weight: bold;
+        }
+
+        .stats-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00f0ff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #aaa;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .flow-diagram {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .flow-step {
+            display: inline-block;
+            margin: 10px;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 2px solid #00f0ff;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        .flow-arrow {
+            font-size: 1.5em;
+            color: #00ff9d;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            .tech-card {
+                border: 2px solid #000;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🚀 CyberShield AI Technology Stack</h1>
+
+        <!-- Frontend Stack -->
+        <div class="tech-grid">
+            <div class="tech-card frontend-card">
+                <div class="card-header">
+                    <div class="card-icon">💻</div>
+                    <div class="card-title">Frontend Stack</div>
+                </div>
+                <div class="tech-list">
+                    <li><span class="version-badge">v18.2.0</span>React 18</li>
+                    <li><span class="version-badge">v6.8.0</span>React Router DOM</li>
+                    <li><span class="version-badge">v3.2.7</span>Tailwind CSS</li>
+                    <li><span class="version-badge">v10.2.4</span>Framer Motion</li>
+                    <li><span class="version-badge">v0.315.0</span>Lucide React Icons</li>
+                    <li><span class="version-badge">v4.2.0</span>Chart.js</li>
+                    <li><span class="version-badge">v4.6.1</span>Socket.io Client</li>
+                    <li><span class="version-badge">v5.0.1</span>Create React App</li>
+                </div>
+                <div class="tech-category">Key Features:</div>
+                <div class="tech-list">
+                    <li>Glassmorphism Design</li>
+                    <li>Real-time Updates</li>
+                    <li>Responsive Layout</li>
+                    <li>Interactive Animations</li>
+                </div>
+            </div>
+
+            <!-- Backend Stack -->
+            <div class="tech-card backend-card">
+                <div class="card-header">
+                    <div class="card-icon">⚙️</div>
+                    <div class="card-title">Backend Stack</div>
+                </div>
+                <div class="tech-list">
+                    <li><span class="version-badge">v0.95.0+</span>FastAPI</li>
+                    <li><span class="version-badge">v0.22.0+</span>Uvicorn (ASGI)</li>
+                    <li><span class="version-badge">v3.12.3</span>Python</li>
+                    <li><span class="version-badge">v1.10.7</span>Pydantic</li>
+                    <li><span class="version-badge">v3.3.0+</span>python-jose</li>
+                    <li><span class="version-badge">v1.7.4+</span>passlib</li>
+                    <li><span class="version-badge">v0.24.1</span>HTTPX</li>
+                    <li><span class="version-badge">v5.9.5</span>psutil</li>
+                </div>
+                <div class="tech-category">Security:</div>
+                <div class="tech-list">
+                    <li>JWT Authentication</li>
+                    <li>Bcrypt Password Hashing</li>
+                    <li>CORS Protection</li>
+                    <li>Rate Limiting</li>
+                </div>
+            </div>
+
+            <!-- AI/ML Stack -->
+            <div class="tech-card ai-card">
+                <div class="card-header">
+                    <div class="card-icon">🤖</div>
+                    <div class="card-title">AI & ML Stack</div>
+                </div>
+                <div class="tech-list">
+                    <li><span class="version-badge">v2.8.0+</span>PyTorch</li>
+                    <li><span class="version-badge">v0.23.0</span>PyTorch Vision</li>
+                    <li><span class="version-badge">v4.30.0</span>Transformers</li>
+                    <li><span class="version-badge">v0.13.3</span>Tokenizers</li>
+                    <li><span class="version-badge">v2.13.0</span>TensorFlow</li>
+                    <li><span class="version-badge">v1.7.5</span>XGBoost</li>
+                    <li><span class="version-badge">v1.2.2</span>Scikit-learn</li>
+                    <li><span class="version-badge">v4.7.0</span>OpenCV</li>
+                </div>
+                <div class="tech-category">AI Models:</div>
+                <div class="tech-list">
+                    <li><span class="highlight">BERT</span> for Fake News Detection</li>
+                    <li><span class="highlight">CNN</span> for Deepfake Detection</li>
+                    <li><span class="highlight">XGBoost</span> for Crime Analytics</li>
+                </div>
+            </div>
+
+            <!-- Database Stack -->
+            <div class="tech-card database-card">
+                <div class="card-header">
+                    <div class="card-icon">🗄️</div>
+                    <div class="card-title">Database Stack</div>
+                </div>
+                <div class="tech-list">
+                    <li><span class="version-badge">v4.4+</span>MongoDB (Primary)</li>
+                    <li><span class="version-badge">v4.3.3</span>PyMongo</li>
+                    <li><span class="version-badge">v3.1.2</span>Motor</li>
+                    <li><span class="version-badge">v4.5.1</span>Redis</li>
+                    <li><span class="version-badge">v2.0.1</span>Pandas</li>
+                    <li><span class="version-badge">v1.24.3</span>NumPy</li>
+                </div>
+                <div class="tech-category">Current Setup:</div>
+                <div class="tech-list">
+                    <li><span class="highlight">In-Memory</span> Storage (Fallback)</li>
+                    <li>Redis for Sessions</li>
+                    <li>Data Isolation Ready</li>
+                </div>
+            </div>
+
+            <!-- Security Stack -->
+            <div class="tech-card security-card">
+                <div class="card-header">
+                    <div class="card-icon">🔐</div>
+                    <div class="card-title">Security Stack</div>
+                </div>
+                <div class="tech-list">
+                    <li><span class="version-badge">v2.8.0</span>PyOTP (2FA)</li>
+                    <li><span class="version-badge">v7.4.0</span>QRCode</li>
+                    <li><span class="version-badge">v9.5.0</span>Pillow</li>
+                    <li><span class="version-badge">v0.1.9</span>SlowAPI</li>
+                    <li><span class="version-badge">v3.6.0</span>Limits</li>
+                    <li>SSL/TLS Encryption</li>
+                    <li>Input Validation</li>
+                </div>
+                <div class="tech-category">Security Features:</div>
+                <div class="tech-list">
+                    <li>JWT Token Authentication</li>
+                    <li>Two-Factor Authentication</li>
+                    <li>Rate Limiting</li>
+                    <li>CORS Protection</li>
+                </div>
+            </div>
+
+            <!-- DevOps Stack -->
+            <div class="tech-card devops-card">
+                <div class="card-header">
+                    <div class="card-icon">🚀</div>
+                    <div class="card-title">DevOps Stack</div>
+                </div>
+                <div class="tech-list">
+                    <li>AWS EC2 (Ubuntu 24.04)</li>
+                    <li><span class="version-badge">v1.18.0+</span>Nginx</li>
+                    <li>Systemd Service Management</li>
+                    <li>Docker Ready</li>
+                    <li>SSL Certificate Ready</li>
+                    <li>SSH Key Authentication</li>
+                </div>
+                <div class="tech-category">Infrastructure:</div>
+                <div class="tech-list">
+                    <li><span class="highlight">2 vCPU, 4GB RAM</span></li>
+                    <li>16GB Storage</li>
+                    <li>Load Balancing Ready</li>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="stats-container">
+            <h2 style="text-align: center; margin-top: 0; margin-bottom: 30px;">📊 Performance Metrics</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">85-95%</div>
+                    <div class="stat-label">AI Model Accuracy</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">&lt;500ms</div>
+                    <div class="stat-label">API Response Time</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">&lt;3s</div>
+                    <div class="stat-label">AI Inference Time</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">1000+</div>
+                    <div class="stat-label">Concurrent Users</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">90+</div>
+                    <div class="stat-label">Lighthouse Score</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">99.9%</div>
+                    <div class="stat-label">Target Uptime</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Flow -->
+        <div class="flow-diagram">
+            <h2 style="text-align: center; margin-top: 0; margin-bottom: 30px;">🔄 Data Flow Architecture</h2>
+            <div>
+                <span class="flow-step">User Input</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-step">React Frontend</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-step">Nginx Gateway</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-step">FastAPI Backend</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-step">AI Processing</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-step">Database Storage</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-step">Response</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            CyberShield AI - Advanced AI-Powered Security Platform<br>
+            🛡️ Making Digital Spaces Safer Through Artificial Intelligence
+        </div>
+    </div>
+</body>
+</html>

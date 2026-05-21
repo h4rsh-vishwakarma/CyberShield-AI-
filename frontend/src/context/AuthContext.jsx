@@ -38,7 +38,17 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch('http://localhost:8000/api/auth/login', {
+      console.log('Attempting login for:', email);
+
+      // Clear any existing auth data first
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setUser(null);
+
+      // Small delay to ensure cleanup is complete
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -46,19 +56,33 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
+        const errorData = await response.json();
+        throw new Error(errorData.detail || errorData.message || 'Login failed');
       }
 
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setUser(data.user);
+      const data = await response.json();
+      console.log('Login successful, received data:', data);
 
-      toast.success('Login successful! Welcome to CyberShield AI.');
+      // Store token and user data
+      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      // Create a new user object to ensure React detects the change
+      const newUser = { ...data.user };
+      // Update state immediately
+      setUser(newUser);
+
+      console.log('User state updated:', newUser);
+      console.log('Stored in localStorage - token:', !!data.access_token, 'user:', !!data.user);
+
+      // Force a storage event to notify other tabs/components
+      window.dispatchEvent(new Event('storage'));
+
+      toast.success(`Login successful! Welcome ${data.user.name}.`);
       return data;
     } catch (error) {
+      console.error('Login error:', error);
       toast.error(error.message || 'Login failed');
       throw error;
     }
@@ -66,7 +90,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const response = await fetch('http://localhost:8000/api/auth/register', {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,24 +98,28 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify(userData),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.message || 'Registration failed');
+        const errorData = await response.json();
+        throw new Error(errorData.detail || errorData.message || 'Registration failed');
       }
 
+      const data = await response.json();
       toast.success('Registration successful! Please login.');
       return data;
     } catch (error) {
+      console.error('Registration error:', error);
       toast.error(error.message || 'Registration failed');
       throw error;
     }
   };
 
   const logout = () => {
+    console.log('Logging out, clearing auth data');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
+    // Force storage event to notify all components
+    window.dispatchEvent(new Event('storage'));
     toast.success('Logged out successfully');
   };
 

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield AI Architecture</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .diagram-container {
+            max-width: 1200px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            background: linear-gradient(90deg, #00f0ff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .layer {
+            margin: 20px 0;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid;
+            text-align: center;
+            position: relative;
+        }
+
+        .client-layer {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(0, 255, 157, 0.1));
+            border-color: #00f0ff;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+
+        .gateway-layer {
+            background: linear-gradient(135deg, rgba(255, 0, 153, 0.1), rgba(255, 51, 102, 0.1));
+            border-color: #ff0099;
+            box-shadow: 0 0 20px rgba(255, 0, 153, 0.2);
+        }
+
+        .application-layer {
+            background: linear-gradient(135deg, rgba(255, 204, 0, 0.1), rgba(255, 153, 51, 0.1));
+            border-color: #ffcc00;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.2);
+        }
+
+        .data-layer {
+            background: linear-gradient(135deg, rgba(0, 255, 102, 0.1), rgba(0, 204, 153, 0.1));
+            border-color: #00ff66;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
+        }
+
+        .ai-layer {
+            background: linear-gradient(135deg, rgba(255, 102, 255, 0.1), rgba(204, 51, 255, 0.1));
+            border-color: #ff66ff;
+            box-shadow: 0 0 20px rgba(255, 102, 255, 0.2);
+        }
+
+        .cache-layer {
+            background: linear-gradient(135deg, rgba(102, 204, 255, 0.1), rgba(51, 153, 255, 0.1));
+            border-color: #66ccff;
+            box-shadow: 0 0 20px rgba(102, 204, 255, 0.2);
+        }
+
+        .layer-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .layer-content {
+            font-size: 1em;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .layer-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .layer-content li {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .connection-line {
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(180deg, #00f0ff, #00ff9d);
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+
+        .connection-line-thick {
+            height: 40px;
+            background: linear-gradient(180deg, #ff0099, #ffcc00);
+        }
+
+        .multi-connection {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        .connection-vertical {
+            width: 3px;
+            height: 30px;
+            background: linear-gradient(180deg, #ffcc00, #00ff66);
+        }
+
+        .bottom-layers {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .bottom-layer {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid;
+            text-align: center;
+        }
+
+        .technologies {
+            font-size: 0.9em;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        .icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            .diagram-container {
+                box-shadow: none;
+                border: 2px solid #000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <h1 class="title">🛡️ CyberShield AI System Architecture</h1>
+
+        <!-- Client Layer -->
+        <div class="layer client-layer">
+            <div class="icon">💻</div>
+            <div class="layer-title">Client Layer (Frontend)</div>
+            <div class="layer-content">
+                React 18 + Tailwind CSS + Framer Motion + React Router<br>
+                Lucide React Icons + Chart.js + Socket.io Client
+            </div>
+        </div>
+
+        <!-- Connection Line -->
+        <div class="connection-line"></div>
+
+        <!-- Gateway Layer -->
+        <div class="layer gateway-layer">
+            <div class="icon">🌐</div>
+            <div class="layer-title">Gateway Layer (Nginx)</div>
+            <div class="layer-content">
+                SSL/TLS Termination + Static Files + Load Balancing<br>
+                Reverse Proxy → http://localhost:8001 (FastAPI Backend)
+            </div>
+        </div>
+
+        <!-- Connection Line -->
+        <div class="connection-line"></div>
+
+        <!-- Application Layer -->
+        <div class="layer application-layer">
+            <div class="icon">⚙️</div>
+            <div class="layer-title">Application Layer (FastAPI Backend)</div>
+            <div class="layer-content">
+                <ul>
+                    <li><strong>REST API Endpoints (400+)</strong></li>
+                    <li>• Authentication (JWT + 2FA)</li>
+                    <li>• Fake News Analysis (BERT-based)</li>
+                    <li>• Deepfake Detection (CNN-based)</li>
+                    <li>• Crime Analytics (XGBoost)</li>
+                    <li>• User Management (CRUD)</li>
+                    <li>• Dashboard & Analytics</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Connection Line -->
+        <div class="connection-line"></div>
+
+        <!-- Business Logic Layer -->
+        <div class="layer" style="background: linear-gradient(135deg, rgba(204, 102, 0, 0.1), rgba(153, 51, 0, 0.1)); border-color: #cc6600;">
+            <div class="icon">🤖</div>
+            <div class="layer-title">Business Logic & AI Models</div>
+            <div class="layer-content">
+                <ul>
+                    <li>• Fake News Detector (Enhanced BERT)</li>
+                    <li>• Deepfake Detector (CNN + Vision Transformers)</li>
+                    <li>• Crime Analytics (XGBoost + Spatial Analysis)</li>
+                    <li>• Analysis Engine + Result Processing</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Multiple Connections -->
+        <div class="multi-connection">
+            <div class="connection-vertical"></div>
+            <div class="connection-vertical"></div>
+            <div class="connection-vertical"></div>
+        </div>
+
+        <!-- Bottom Layers -->
+        <div class="bottom-layers">
+            <!-- Data Layer -->
+            <div class="bottom-layer data-layer">
+                <div class="icon">🗄️</div>
+                <div class="layer-title">Data Layer</div>
+                <div class="layer-content">
+                    In-Memory<br>
+                    (Fallback)
+                </div>
+            </div>
+
+            <!-- AI Models Layer -->
+            <div class="bottom-layer ai-layer">
+                <div class="icon">🧠</div>
+                <div class="layer-title">AI Models</div>
+                <div class="layer-content">
+                    PyTorch<br>
+                    Transformers<br>
+                    TensorFlow
+                </div>
+            </div>
+
+            <!-- Caching Layer -->
+            <div class="bottom-layer cache-layer">
+                <div class="icon">⚡</div>
+                <div class="layer-title">Caching</div>
+                <div class="layer-content">
+                    Redis<br>
+                    (Sessions)
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

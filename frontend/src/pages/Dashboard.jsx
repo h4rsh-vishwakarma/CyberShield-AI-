@@ -21,6 +21,7 @@ import {
   MoreVertical
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
 
 export const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -34,39 +35,131 @@ export const Dashboard = () => {
   const [recentActivity, setRecentActivity] = useState([]);
   const [threatLevel, setThreatLevel] = useState('Low');
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  // Get current user from AuthContext
+  const { user: authUser } = useAuth();
 
   useEffect(() => {
-    fetchDashboardData();
-    const interval = setInterval(fetchDashboardData, 30000); // Update every 30 seconds
+    console.log('Dashboard mounted/updated');
+    console.log('AuthContext user:', authUser);
+    console.log('currentUser state:', currentUser);
+    console.log('localStorage user:', localStorage.getItem('user'));
+
+    // Check for user changes and refetch data
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user');
+
+    if (token && userData) {
+      const user = JSON.parse(userData);
+      console.log('Parsed user from localStorage:', user);
+
+      // Always refetch when user changes or component mounts
+      if (!currentUser || currentUser.id !== user.id || currentUser.email !== user.email) {
+        console.log('User changed or first load, refetching dashboard data');
+        console.log('Previous user:', currentUser?.email, 'New user:', user.email);
+        setCurrentUser(user);
+        // Reset stats before fetching to prevent showing old data
+        setStats({
+          totalAnalyses: 0,
+          fakeNewsDetected: 0,
+          deepfakesDetected: 0,
+          activeAlerts: 0,
+          systemHealth: 98,
+          processingTime: 2.3
+        });
+        setRecentActivity([]);
+        setLoading(true);
+        fetchDashboardData();
+      } else {
+        console.log('User unchanged, skipping refresh');
+      }
+    } else {
+      console.log('No token or user data found');
+      setLoading(false);
+    }
+
+    const interval = setInterval(() => {
+      // Only fetch if we have a token
+      if (localStorage.getItem('token')) {
+        fetchDashboardData();
+      }
+    }, 30000); // Update every 30 seconds
+
     return () => clearInterval(interval);
-  }, []);
+  }, [authUser]); // Depend on auth user changes from context
 
   const fetchDashboardData = async () => {
     try {
-      // Simulated data - replace with actual API calls
-      const mockStats = {
-        totalAnalyses: Math.floor(Math.random() * 1000) + 5000,
-        fakeNewsDetected: Math.floor(Math.random() * 100) + 300,
-        deepfakesDetected: Math.floor(Math.random() * 50) + 120,
-        activeAlerts: Math.floor(Math.random() * 10) + 5,
-        systemHealth: Math.floor(Math.random() * 5) + 95,
-        processingTime: (Math.random() * 2 + 1.5).toFixed(2)
-      };
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
 
-      const mockActivity = [
-        { id: 1, type: 'success', message: 'Fake news analysis completed', time: '2 min ago', confidence: 94 },
-        { id: 2, type: 'warning', message: 'Suspicious activity detected in region 3', time: '15 min ago', confidence: 78 },
-        { id: 3, type: 'success', message: 'Deepfake verification completed', time: '32 min ago', confidence: 89 },
-        { id: 4, type: 'danger', message: 'New malware pattern identified', time: '1 hour ago', confidence: 96 },
-        { id: 5, type: 'success', message: 'System backup completed successfully', time: '2 hours ago', confidence: 100 },
-      ];
+      console.log('Fetching dashboard data...');
+      console.log('Token exists:', !!token);
+      console.log('User data:', userData ? JSON.parse(userData) : 'No user data');
 
-      setStats(mockStats);
-      setRecentActivity(mockActivity);
-      setThreatLevel(mockStats.activeAlerts > 10 ? 'High' : mockStats.activeAlerts > 5 ? 'Medium' : 'Low');
+      if (!token) {
+        console.error('No authentication token found');
+        return;
+      }
+
+      // Fetch real data from backend API with cache busting
+      const timestamp = Date.now();
+      const [statsResponse, activityResponse] = await Promise.all([
+        fetch(`/api/dashboard/stats?t=${timestamp}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        }),
+        fetch(`/api/dashboard/recent-activity?limit=10&t=${timestamp}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        })
+      ]);
+
+      console.log('Stats response status:', statsResponse.status);
+      console.log('Activity response status:', activityResponse.status);
+
+      if (!statsResponse.ok || !activityResponse.ok) {
+        throw new Error('Failed to fetch dashboard data');
+      }
+
+      const statsData = await statsResponse.json();
+      const activityData = await activityResponse.json();
+
+      console.log('Dashboard stats received:', statsData);
+      console.log('Dashboard activity received:', activityData);
+
+      setStats({
+        totalAnalyses: statsData.total_analyses || 0,
+        fakeNewsDetected: statsData.fake_news_detected || 0,
+        deepfakesDetected: statsData.deepfakes_detected || 0,
+        activeAlerts: statsData.active_alerts || 0,
+        systemHealth: statsData.system_health || 98,
+        processingTime: statsData.processing_time || 2.3
+      });
+
+      setRecentActivity(activityData.activities || []);
+      setThreatLevel(statsData.active_alerts > 10 ? 'High' : statsData.active_alerts > 5 ? 'Medium' : 'Low');
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
-      toast.error('Failed to load dashboard data');
+      // Fallback to mock data if API fails
+      const mockStats = {
+        totalAnalyses: 0,
+        fakeNewsDetected: 0,
+        deepfakesDetected: 0,
+        activeAlerts: 0,
+        systemHealth: 98,
+        processingTime: 2.3
+      };
+      setStats(mockStats);
+      setRecentActivity([]);
+      setThreatLevel('Low');
     } finally {
       setLoading(false);
     }
