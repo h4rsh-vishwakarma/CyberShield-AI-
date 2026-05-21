@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-cyber-light;
+  }
+
+  body {
+    @apply bg-cyber-darker text-white font-sans;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-cyber-darker;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-cyber-light rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-cyber-primary;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-cyber-primary to-cyber-secondary text-cyber-darker font-semibold rounded-lg hover:shadow-[0_0_20px_rgba(0,240,255,0.5)] transition-all duration-300 transform hover:scale-105;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-transparent border-2 border-cyber-primary text-cyber-primary font-semibold rounded-lg hover:bg-cyber-primary hover:text-cyber-darker transition-all duration-300 transform hover:scale-105;
+  }
+
+  .btn-danger {
+    @apply px-6 py-3 bg-gradient-to-r from-cyber-danger to-cyber-accent text-white font-semibold rounded-lg hover:shadow-[0_0_20px_rgba(255,51,102,0.5)] transition-all duration-300 transform hover:scale-105;
+  }
+
+  .card {
+    @apply bg-cyber-light/50 backdrop-blur-xl border border-cyber-light/30 rounded-xl p-6 shadow-2xl hover:border-cyber-primary/50 transition-all duration-300;
+  }
+
+  .input {
+    @apply w-full px-4 py-3 bg-cyber-darker/50 border border-cyber-light/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyber-primary focus:ring-2 focus:ring-cyber-primary/20 transition-all duration-300;
+  }
+
+  .glass {
+    @apply bg-cyber-light/30 backdrop-blur-lg border border-cyber-light/20;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-cyber-primary via-cyber-secondary to-cyber-accent bg-clip-text text-transparent;
+  }
+
+  .cyber-border {
+    @apply border-2 border-cyber-primary/50 rounded-lg;
+  }
+
+  .cyber-glow {
+    @apply shadow-[0_0_15px_rgba(0,240,255,0.3)] hover:shadow-[0_0_25px_rgba(0,240,255,0.5)] transition-shadow duration-300;
+  }
+
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 3s ease infinite;
+  }
+
+  @keyframes gradient {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .stat-card {
+    @apply card relative overflow-hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #00f0ff, #7000ff, #ff006e);
+    animation: gradient 3s ease infinite;
+  }
+
+  .sidebar-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 cursor-pointer hover:bg-cyber-light/50;
+  }
+
+  .sidebar-item.active {
+    @apply bg-gradient-to-r from-cyber-primary/20 to-cyber-secondary/20 border-l-4 border-cyber-primary;
+  }
+
+  .nav-item {
+    @apply relative px-4 py-2 text-gray-300 hover:text-cyber-primary transition-colors duration-300;
+  }
+
+  .nav-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #00f0ff, #7000ff);
+    transition: width 0.3s ease;
+  }
+
+  .nav-item:hover::after,
+  .nav-item.active::after {
+    width: 100%;
+  }
+
+  .loading-spinner {
+    @apply w-12 h-12 border-4 border-cyber-primary border-t-transparent rounded-full animate-spin;
+  }
+
+  .alert-item {
+    @apply p-4 rounded-lg border-l-4 transition-all duration-300;
+  }
+
+  .alert-item.success {
+    @apply bg-cyber-success/10 border-cyber-success;
+  }
+
+  .alert-item.warning {
+    @apply bg-cyber-warning/10 border-cyber-warning;
+  }
+
+  .alert-item.danger {
+    @apply bg-cyber-danger/10 border-cyber-danger;
+  }
+
+  .chart-container {
+    @apply relative h-64 w-full;
+  }
+}
+
+@layer utilities {
+  .text-shadow-cyber {
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+  }
+
+  .bg-gradient-cyber {
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+  }
+
+  .backdrop-blur-cyber {
+    backdrop-filter: blur(12px);
+  }
+}

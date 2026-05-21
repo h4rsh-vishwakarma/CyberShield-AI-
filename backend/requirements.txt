@@ -1,0 +1,67 @@
+# FastAPI and ASGI server
+fastapi>=0.95.0
+uvicorn[standard]>=0.22.0
+python-multipart>=0.0.6
+
+# Data validation
+pydantic>=1.10.7
+pydantic[email]
+
+# Security and Authentication
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+python-dotenv>=1.0.0
+
+# Security Enhancements
+slowapi>=0.1.9
+limits>=3.6.0
+
+# Two-Factor Authentication
+pyotp>=2.8.0
+qrcode>=7.4.0
+Pillow>=9.5.0
+
+# Database
+pymongo>=4.3.3
+motor>=3.1.2
+redis>=4.5.1
+
+# AI/ML Core Libraries
+torch>=2.8.0
+torchvision>=0.23.0
+transformers>=4.30.0
+tokenizers>=0.13.3
+
+# Computer Vision
+opencv-python>=4.7.0
+pillow>=9.5.0
+
+# Data Processing
+numpy>=1.24.3
+pandas>=2.0.1
+scikit-learn>=1.2.2
+
+# Video Processing
+moviepy>=1.0.3
+
+# Advanced ML Models
+xgboost>=1.7.5
+tensorflow>=2.13.0
+
+# HTTP and Async
+httpx==0.24.1
+aiofiles==23.1.0
+python-socketio==5.8.0
+websockets==11.0.3
+
+# System Monitoring
+psutil==5.9.5
+
+# Development and Testing
+pytest==7.3.1
+pytest-asyncio==0.21.0
+httpx==0.24.1
+
+# Utilities
+python-dateutil==2.8.2
+pytz==2023.3

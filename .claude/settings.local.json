@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install *)",
+      "Bash(python create_ppt.py)",
+      "Bash(cd \"/d/Projects/CyberShield AI\" && ls -lh *.pptx)",
+      "Read(//d/d/Projects/**)",
+      "Bash(cd \"/d/Projects/CyberShield AI\" && mkdir -p frontend backend ai-models datasets docs deployment)",
+      "Bash(tasklist)",
+      "Bash(python -m venv venv)"
+    ],
+    "additionalDirectories": [
+      "d:\\d\\Projects\\CyberShield AI"
+    ]
+  }
+}
